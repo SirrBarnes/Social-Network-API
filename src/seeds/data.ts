@@ -97,21 +97,46 @@ const thoughts = [
   "Why are we more creative when we're about to fall asleep?"
 ];
 
+const reactions = [
+  "Wow, I’ve never thought about that!",
+  "That’s mind-blowing!",
+  "Hmm, that's a really interesting perspective.",
+  "Now I can't stop thinking about it!",
+  "That would completely change how we view the world.",
+  "I wonder if there’s any way to actually know that.",
+  "Makes me feel like the universe is so mysterious.",
+  "I love how deep that gets!",
+  "I’m definitely going to ponder this for a while.",
+  "That just blew my mind!",
+  "The possibilities are endless!",
+  "That’s a super trippy idea.",
+  "Wow, I’m actually questioning reality now!",
+  "That's a pretty wild thought!",
+  "Now I’m curious what science would say about this.",
+  "That could open up a whole new way of thinking.",
+  "That's so fascinating to think about!",
+  "It's kind of unsettling but also so cool.",
+  "I've never considered that before.",
+  "I need more coffee to wrap my head around this!"
+];
+
 // Get a random item given an array
-export const getRandomArrItem = (arr: any) => arr[Math.floor(Math.random() * arr.length)];
+const getRandomArrItem = (arr: string[]) => {
+  return Math.floor(Math.random() * arr.length);
+}
 
 // Gets a random full name
-export const getRandomName =() =>
-  `${getRandomArrItem(names)} ${getRandomArrItem(names)}`;
+const getRandomName = () => {
+  return `${getRandomArrItem(names)}${getRandomArrItem(names)}`;
+}
 
-// Function to generate random assignments that we can add to student object.
-export const getRandomThought = (int: number) => {
-  const results = [];
-  for (let i = 0; i < int; i++) {
-    results.push({
-      name: getRandomArrItem(thoughts),
-      score: Math.floor(Math.random() * (99 - 70 + 1) + 70),
-    });
-  }
-  return results;
-};
+const getRandomThought = () => {
+  return getRandomArrItem(thoughts);
+}
+
+const getRandomReaction = () => {
+  return getRandomArrItem(reactions);
+}
+
+
+export { getRandomName, getRandomThought, getRandomReaction, getRandomArrItem };

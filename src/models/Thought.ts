@@ -1,10 +1,20 @@
-import { Schema, model, type Document } from 'mongoose';
+import { Schema, model, ObjectId } from 'mongoose';
+import moment from 'moment';
+import Reaction  from './Reaction';
 
-interface IThought extends Document {
+interface IThought {
     thoughtText: string;
-    createdAt: Date;
+    createdAt?: Date;
     username: string;
-    reactions: [];
+    reactions: Array<{
+        reactionId: ObjectId;
+        
+        reactionBody: string;
+
+        username: string;
+
+        createdAt?: Date;
+    }>;
 };
 
 const thoughtSchema = new Schema<IThought>(
@@ -12,24 +22,29 @@ const thoughtSchema = new Schema<IThought>(
         thoughtText: {
             type: String,
             required: true,
-            min: 1,
-            max: 280 },
+            minlength: 1,
+            maxlength: 280 
+        },
+
         createdAt: {
             type: Date,
             default: Date.now,
-            // get: (date: Date) => date.toDateString() 
-            },
+            get: (timestamp: Date | undefined) => {
+                return timestamp ? moment(timestamp).format('MMMM Do YYYY, h:mm:ss a') : ''
+            } 
+        },
+
         username: {
             type: String,
-            required: true,
+            required: true 
         },
-        reactions: [{
 
-        }],
+        reactions: [Reaction],
     },
     {
         toJSON: {
             virtuals: true,
+            getters: true,
         },
         id: false,
     }

@@ -1,28 +1,37 @@
 import { ObjectId, Schema, Types, type Document } from 'mongoose';
+import moment from 'moment';
 
 interface IReaction extends Document {
     reactionId: ObjectId;
     reactionBody: string;
     username: string;
-    createdAt: Date;
+    createdAt?: Date;
 }
 
 const reactionSchema = new Schema<IReaction>(
     {
         reactionId: {
             type: Schema.Types.ObjectId,
-            default: () => new Types.ObjectId(), },
+            default: () => new Types.ObjectId()
+        },
+
         reactionBody: {
             type: String,
             required: true,
-            maxlength: 280 },
+            maxlength: 280 
+        },
+
         username: {
             type: String,
-            required: true },
+            required: true 
+        },
+        
         createdAt: {
             type: Date,
             default: Date.now,
-            //getter method to format timestamp on query
+            get: (timestamp: Date | undefined) => {
+                return timestamp ? moment(timestamp).format('MMMM Do YYYY, h:mm:ss a'): ''
+            }
         },
     },
     {
@@ -32,5 +41,6 @@ const reactionSchema = new Schema<IReaction>(
         id: false,
     }
 );
+
 
 export default reactionSchema;

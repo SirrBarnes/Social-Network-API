@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 const router = Router();
 import {
   getAllThoughts,
@@ -25,4 +26,4 @@ router.route('/:thoughtId/reactions').post(addThoughtReaction);
 // /api/thoughts/:thoughtId/reactions/:reactionId
 router.route('/:thoughtId/reactions/:reactionId').delete(deleteThoughtReaction);
 
-export { router as thoughtRouter } ;
+export default router;

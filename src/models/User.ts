@@ -8,8 +8,8 @@ const validateemail = function(email: string) {
 interface IUser extends Document {
     username: string;
     email: string;
-    thoughts: ObjectId[];
-    friends: ObjectId[];
+    thoughts?: ObjectId[];
+    friends?: ObjectId[];
 }
 
 const userSchema = new Schema<IUser>(
@@ -18,22 +18,26 @@ const userSchema = new Schema<IUser>(
             type: String, 
             unique: true, 
             required: true, 
-            trim: true },
+            trim: true 
+        },
 
         email: { 
             type: String, 
             unique: true, 
             required: true, 
             validate: [validateemail, 'Please enter a valid email'],
-            match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email'] },
+            match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email'
+            ]},
 
         thoughts: [{ 
             type: Schema.Types.ObjectId, 
-            ref:'Thought' }],
+            ref:'Thought' 
+        }],
 
         friends: [{
             type: Schema.Types.ObjectId,
-            ref: 'User' }],
+            ref: 'User' 
+        }],
     },
     {
         toJSON: {

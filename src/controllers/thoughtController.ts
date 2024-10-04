@@ -125,7 +125,6 @@ export const deleteThought = async (req: Request, res: Response) => {
     return; 
 }
 
-// Add a thought reaction
 /**
  * PUT Thought reaction based on id /thoughts/:id
  * @param object id, username
