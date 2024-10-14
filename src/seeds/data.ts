@@ -1,3 +1,5 @@
+import { uuid } from 'uuidv4';
+
 const names = [
   'Aaran',
   'Aaren',
@@ -121,22 +123,53 @@ const reactions = [
 ];
 
 // Get a random item given an array
-const getRandomArrItem = (arr: string[]) => {
-  return Math.floor(Math.random() * arr.length);
+const getRandomArrItem = (arr: any[]) => {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 // Gets a random full name
 const getRandomName = () => {
-  return `${getRandomArrItem(names)}${getRandomArrItem(names)}`;
+  return `${getRandomArrItem(names)} ${getRandomArrItem(names)}`;
 }
 
-const getRandomThought = () => {
-  return getRandomArrItem(thoughts);
-}
+// Function to generate random thouhts that we can add to user object.
+// const getRandomThought = (x: number) => {
+//   return Array.from({ length: x }).map(() => ({
+//     thoughtText: getRandomArrItem(thoughts),
+//     createdAt: new Date(),
+//     username: getRandomName(),
+//     reactions: [...getRandomReaction(3)],
+//   }));
+// };
 
-const getRandomReaction = () => {
-  return getRandomArrItem(reactions);
-}
+const getRandomThought = (x: number) => {
+  let results = [];
+  for ( let i = 0; i < x; i++) {
+    results.push({
+      thoughtText:  getRandomArrItem(thoughts),
+      createdAt: new Date(),
+      username: getRandomName(),
+      reactions: [...getRandomReaction(3)],
+    });
+  }
+  return results;
+};
 
+const getRandomReaction = (x: number) => {
+  if (x === 1) {
+    return getRandomArrItem(reactions);
+  }
+  
+  const results = [];
+  for (let i = 0; i < x; i++) {
+    results.push({
+      reactionId: uuid(),
+      reactionBody: getRandomArrItem(reactions),
+      username: getRandomName(),
+      createdAt: new Date(),
+    });
+  }
+  return results;
+};
 
-export { getRandomName, getRandomThought, getRandomReaction, getRandomArrItem };
+export { getRandomName, getRandomThought };

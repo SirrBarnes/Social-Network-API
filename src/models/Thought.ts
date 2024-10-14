@@ -1,20 +1,12 @@
-import { Schema, model, ObjectId } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import moment from 'moment';
-import Reaction  from './Reaction';
+import Reaction  from './Reaction.js';
 
 interface IThought {
     thoughtText: string;
     createdAt?: Date;
     username: string;
-    reactions: Array<{
-        reactionId: ObjectId;
-        
-        reactionBody: string;
-
-        username: string;
-
-        createdAt?: Date;
-    }>;
+    reactions: typeof Reaction[]
 };
 
 const thoughtSchema = new Schema<IThought>(
