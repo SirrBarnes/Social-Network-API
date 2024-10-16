@@ -1,4 +1,4 @@
-import { User, Thought } from '../models/index.js';
+import { Thought } from '../models/index.js';
 import { Request, Response } from 'express';
 
 //Get all thoughts
@@ -6,6 +6,7 @@ export const getAllThoughts = async (_req: Request, res: Response) => {
     try {
         const thoughts = await Thought.find();
         res.json(thoughts);
+
     } catch (error) {
         res.status(500).json(error);
     }
@@ -14,16 +15,16 @@ export const getAllThoughts = async (_req: Request, res: Response) => {
 
 //Get a single thought
 export const getThoughtById = async (req: Request, res: Response) => {
+    const { thoughtId } = req.params;
     try {
-        const thought = await Thought.findOne({ _id: req.params.thoughtId })
-            .select('-__v');
+        const thought = await Thought.findById( thoughtId )
 
         if (!thought) {
             return res.status(404).json({ message: 'No thought with that ID' });
         }
 
         res.json(thought);
-        return; 
+        return;
 
     } catch (error) {
         res.status(500).json(error);
@@ -35,23 +36,9 @@ export const getThoughtById = async (req: Request, res: Response) => {
 export const createThought = async (req: Request, res: Response) => {
     try {
         const thought = await Thought.create(req.body);
-        const user = await User.findOneAndUpdate(
-            { _id: req.body.userId },
-            { $addToSet: { thoughts: thought._id } },
-            { new: true }
-        );
-
-        if (!user) {
-            return res.status(404).json({
-                message: 'Thought created, but found no user with that ID',
-            });
-        }
-
-        res.json('Created the Thought 🎉');
-        return;
+        res.json(thought);
 
     } catch (error) {
-        console.log(error);
         res.status(500).json(error);
         return;
     }
@@ -80,27 +67,18 @@ export const updateThought = async (req: Request, res: Response) => {
     }
 }
 
-//Delete Thought
+//Delete Thought and associated reactions
 export const deleteThought = async (req: Request, res: Response) => {
     try {
         const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
 
         if (!thought) {
-            return res.status(404).json({ message: 'No thought with this id!' });
+            res.status(404).json({ message: 'No thought with this id!' });
+
+        } else {
+            await Thought.deleteMany({ _id: { $in: thought.reactions} });
+            res.json({ message: 'Thought and Reaction deleted' });
         }
-
-        const user = await User.findOneAndUpdate(
-            { thoughts: req.params.thoughtId },
-            { $pull: { thoughts: req.params.thoughtId } },
-            { new: true }
-        );
-
-        if (!user) {
-        return res.status(404).json({ message: 'Thought created but no user with this id!' });
-        }
-
-        res.json({ message: 'Thought successfully deleted!' });
-        return;
 
     } catch (error) {
         res.status(500).json(error);

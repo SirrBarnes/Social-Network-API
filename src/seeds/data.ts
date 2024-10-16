@@ -27,7 +27,7 @@ const names = [
   'Smith',
   'Jones',
   'Coollastname',
-  'enter_name_here',
+  'Sam',
   'Ze',
   'Zechariah',
   'Zeek',
@@ -132,29 +132,6 @@ const getRandomName = () => {
   return `${getRandomArrItem(names)} ${getRandomArrItem(names)}`;
 }
 
-// Function to generate random thouhts that we can add to user object.
-// const getRandomThought = (x: number) => {
-//   return Array.from({ length: x }).map(() => ({
-//     thoughtText: getRandomArrItem(thoughts),
-//     createdAt: new Date(),
-//     username: getRandomName(),
-//     reactions: [...getRandomReaction(3)],
-//   }));
-// };
-
-const getRandomThought = (x: number) => {
-  let results = [];
-  for ( let i = 0; i < x; i++) {
-    results.push({
-      thoughtText:  getRandomArrItem(thoughts),
-      createdAt: new Date(),
-      username: getRandomName(),
-      reactions: [...getRandomReaction(3)],
-    });
-  }
-  return results;
-};
-
 const getRandomReaction = (x: number) => {
   if (x === 1) {
     return getRandomArrItem(reactions);
@@ -172,4 +149,4 @@ const getRandomReaction = (x: number) => {
   return results;
 };
 
-export { getRandomName, getRandomThought };
+export { getRandomName, getRandomReaction, getRandomArrItem, thoughts };

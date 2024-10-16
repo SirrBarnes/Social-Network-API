@@ -13,9 +13,9 @@ export const getAllUsers = async(_req: Request, res: Response) => {
 
 //Get a single user
 export const getUserById = async (req: Request, res: Response) => {
+  const { userId } = req.params;
   try {
-    const user = await User.findOne({ _id: req.params.userId })
-      .select('-__v');
+    const user = await User.findById(userId);
 
     if(!user) {
       return res.status(404).json({ message: 'No user with that ID'});
@@ -33,8 +33,14 @@ export const getUserById = async (req: Request, res: Response) => {
 //Create a new user
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const user = await User.create(req.body);
-    res.json(user);
+    const { username, email } = req.body;
+
+    const user = await User.create({
+      username,
+      email
+    });
+
+    res.status(201).json(user);
     
   } catch (error: any) {
     res.status(400).json(error);
@@ -76,12 +82,11 @@ export const deleteUser = async (req: Request, res: Response) => {
       res.status(404).json({
         message: 'No user with that ID'
       });
-    }
-    else {
+    } else {
       await Thought.deleteMany({ _id: { $in: user.thoughts } });
       res.json({ message: 'Users and Thoughts deleted!' });
-      return;
     }
+
   } catch (error: any) {
     res.status(500).json(error);
     return;
@@ -90,10 +95,16 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 //Add user friend
 export const addUserFriend = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const { friendId } = req.body;
   try {
-    const user = await User.findOneAndUpdate(
-      { _id: req.params.userId },
-      { $addToSet: { friends: req.body } },
+    if (!friendId) {
+      return res.status(400).json({ message: "Friend ID is required" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $addToSet: { friends: friendId } },
       { runValidators: true, new: true }
     );
 

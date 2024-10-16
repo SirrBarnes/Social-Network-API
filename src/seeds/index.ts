@@ -1,46 +1,45 @@
-import connection from '../config/connection.js';
+import db from '../config/connection.js';
 import { User, Thought } from '../models/index.js';
+import cleanDB from './cleanDB.js';
 
-import { getRandomName, getRandomThought } from './data.js';
+import { getRandomName, getRandomReaction, getRandomArrItem, thoughts } from './data.js';
 
-connection.on('error', (err) => err);
 
-connection.once('open', async () => {
-  console.log('connected');
+try {
+  await db();
+  await cleanDB();
 
-  // Delete the collections if they exist
-  let thoughtCheck = await connection.db?.listCollections({ name: 'thoughts' }).toArray();
 
-  if (thoughtCheck?.length) {
-    await connection.dropCollection('thoughts');
-  }
+  const thoughtArray: any[] = [];
+  const userArray: any[] = [];
 
-  let userCheck = await connection.db?.listCollections({ name: 'users' }).toArray();
-  if (userCheck?.length) {
-    await connection.dropCollection('users');
-  }
-
-  const users: any[] = [];
-  const thoughts = getRandomThought(20);
-  // const reactions: any[] = [];
-
-  for(let i = 0; i < 10; i++) {
-    const username = getRandomName();
-    
-    users.push({
-      username,
-      email: `${username}@gmail.com`.replace(/\s/g, '').toLowerCase(),
-      // thoughts: [...getRandomThought(3)],
-      // friends: [],
+  for ( let i = 0; i < 20; i++) {
+    thoughtArray.push({
+      thoughtText:  getRandomArrItem(thoughts),
+      createdAt: new Date(),
+      username: getRandomName(),
+      reactions: [...getRandomReaction(3)],
     });
   }
 
-  await User.collection.insertMany(users);
-  await Thought.collection.insertMany(thoughts);
+  for (let i = 0; i < 10; i++) {
+    const username = getRandomName();
+
+    userArray.push({
+      username,
+      email: `${username}@gmail.com`.replace(/\s/g, '').toLowerCase(),
+    })
+  }
+
+  await User.collection.insertMany(userArray);
+  await Thought.collection.insertMany(thoughtArray);
 
   // loop through the saved videos, for each video we need to generate a video response and insert the video responses
-  console.table(users);
-  console.table(thoughts);
+  console.table(userArray);
+  console.table(thoughtArray);
   console.info('Seeding complete! 🌱');
   process.exit(0);
-});
+} catch(error) {
+  console.error('Error seeding database: ', error);
+  process.exit(1);
+}
