@@ -124,10 +124,12 @@ export const addUserFriend = async (req: Request, res: Response) => {
 //Delete user friend
 export const deleteUserFriend = async (req: Request, res: Response) => {
   try {
-    const user = await User.findOneAndUpdate(
-      { _id: req.params.userId },
-      { $pull: { friends: { friendId: req.params.friendId } } },
-      { runValidators: true, new: true }
+    const { userId, friendId } = req.params;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { friends: friendId  } },
+      { new: true }
     );
 
     if (!user) {
